@@ -151,14 +151,14 @@ UniValue getaddressmempool(const JSONRPCRequest& request)
         }
 
         UniValue delta(UniValue::VOBJ);
-        delta.push_back(Pair("address", address));
-        delta.push_back(Pair("txid", it->first.txhash.GetHex()));
-        delta.push_back(Pair("index", (int)it->first.index));
-        delta.push_back(Pair("satoshis", it->second.amount));
-        delta.push_back(Pair("timestamp", it->second.time));
+        delta.pushKV("address", address);
+        delta.pushKV("txid", it->first.txhash.GetHex());
+        delta.pushKV("index", (int)it->first.index);
+        delta.pushKV("satoshis", it->second.amount);
+        delta.pushKV("timestamp", it->second.time);
         if (it->second.amount < 0) {
-            delta.push_back(Pair("prevtxid", it->second.prevhash.GetHex()));
-            delta.push_back(Pair("prevout", (int)it->second.prevout));
+            delta.pushKV("prevtxid", it->second.prevhash.GetHex());
+            delta.pushKV("prevout", (int)it->second.prevout);
         }
         result.push_back(delta);
     }
@@ -230,22 +230,22 @@ UniValue getaddressutxos(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Unknown address type");
         }
 
-        output.push_back(Pair("address", address));
-        output.push_back(Pair("txid", it->first.txhash.GetHex()));
-        output.push_back(Pair("outputIndex", (int)it->first.index));
-        output.push_back(Pair("script", HexStr(it->second.script.begin(), it->second.script.end())));
-        output.push_back(Pair("satoshis", it->second.satoshis));
-        output.push_back(Pair("height", it->second.blockHeight));
+        output.pushKV("address", address);
+        output.pushKV("txid", it->first.txhash.GetHex());
+        output.pushKV("outputIndex", (int)it->first.index);
+        output.pushKV("script", HexStr(it->second.script.begin(), it->second.script.end()));
+        output.pushKV("satoshis", it->second.satoshis);
+        output.pushKV("height", it->second.blockHeight);
         utxos.push_back(output);
     }
 
     if (includeChainInfo) {
         UniValue result(UniValue::VOBJ);
-        result.push_back(Pair("utxos", utxos));
+        result.pushKV("utxos", utxos);
 
         LOCK(cs_main);
-        result.push_back(Pair("hash", chainActive.Tip()->GetBlockHash().GetHex()));
-        result.push_back(Pair("height", (int)chainActive.Height()));
+        result.pushKV("hash", chainActive.Tip()->GetBlockHash().GetHex());
+        result.pushKV("height", (int)chainActive.Height());
         return result;
     } else {
         return utxos;
@@ -337,12 +337,12 @@ UniValue getaddressdeltas(const JSONRPCRequest& request)
         }
 
         UniValue delta(UniValue::VOBJ);
-        delta.push_back(Pair("satoshis", it->second));
-        delta.push_back(Pair("txid", it->first.txhash.GetHex()));
-        delta.push_back(Pair("index", (int)it->first.index));
-        delta.push_back(Pair("blockindex", (int)it->first.txindex));
-        delta.push_back(Pair("height", it->first.blockHeight));
-        delta.push_back(Pair("address", address));
+        delta.pushKV("satoshis", it->second);
+        delta.pushKV("txid", it->first.txhash.GetHex());
+        delta.pushKV("index", (int)it->first.index);
+        delta.pushKV("blockindex", (int)it->first.txindex);
+        delta.pushKV("height", it->first.blockHeight);
+        delta.pushKV("address", address);
         deltas.push_back(delta);
     }
 
@@ -361,15 +361,15 @@ UniValue getaddressdeltas(const JSONRPCRequest& request)
         UniValue startInfo(UniValue::VOBJ);
         UniValue endInfo(UniValue::VOBJ);
 
-        startInfo.push_back(Pair("hash", startIndex->GetBlockHash().GetHex()));
-        startInfo.push_back(Pair("height", start));
+        startInfo.pushKV("hash", startIndex->GetBlockHash().GetHex());
+        startInfo.pushKV("height", start);
 
-        endInfo.push_back(Pair("hash", endIndex->GetBlockHash().GetHex()));
-        endInfo.push_back(Pair("height", end));
+        endInfo.pushKV("hash", endIndex->GetBlockHash().GetHex());
+        endInfo.pushKV("height", end);
 
-        result.push_back(Pair("deltas", deltas));
-        result.push_back(Pair("start", startInfo));
-        result.push_back(Pair("end", endInfo));
+        result.pushKV("deltas", deltas);
+        result.pushKV("start", startInfo);
+        result.pushKV("end", endInfo);
 
         return result;
     } else {
@@ -426,8 +426,8 @@ UniValue getaddressbalance(const JSONRPCRequest& request)
     }
 
     UniValue result(UniValue::VOBJ);
-    result.push_back(Pair("balance", balance));
-    result.push_back(Pair("received", received));
+    result.pushKV("balance", balance);
+    result.pushKV("received", received);
 
     return result;
 
@@ -557,9 +557,9 @@ UniValue getspentinfo(const JSONRPCRequest& request)
     }
 
     UniValue obj(UniValue::VOBJ);
-    obj.push_back(Pair("txid", value.txid.GetHex()));
-    obj.push_back(Pair("index", (int)value.inputIndex));
-    obj.push_back(Pair("height", value.blockHeight));
+    obj.pushKV("txid", value.txid.GetHex());
+    obj.pushKV("index", (int)value.inputIndex);
+    obj.pushKV("height", value.blockHeight);
 
     return obj;
 }
@@ -569,7 +569,7 @@ UniValue getspentinfo(const JSONRPCRequest& request)
 UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
 {
     UniValue result(UniValue::VOBJ);
-    result.push_back(Pair("hash", block.GetHash().GetHex()));
+    result.pushKV("hash", block.GetHash().GetHex());
     int confirmations = -1;
     // Only report confirmations if the block is on the main chain
     if (chainActive.Contains(blockindex)) {
@@ -577,11 +577,11 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
     } else {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Block is an orphan");
     }
-    result.push_back(Pair("confirmations", confirmations));
-    result.push_back(Pair("size", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION)));
-    result.push_back(Pair("height", blockindex->nHeight));
-    result.push_back(Pair("version", block.nVersion));
-    result.push_back(Pair("merkleroot", block.hashMerkleRoot.GetHex()));
+    result.pushKV("confirmations", confirmations);
+    result.pushKV("size", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION));
+    result.pushKV("height", blockindex->nHeight);
+    result.pushKV("version", block.nVersion);
+    result.pushKV("merkleroot", block.hashMerkleRoot.GetHex());
 
     UniValue deltas(UniValue::VARR);
 
@@ -590,8 +590,8 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
         const uint256 txhash = tx->GetHash();
 
         UniValue entry(UniValue::VOBJ);
-        entry.push_back(Pair("txid", txhash.GetHex()));
-        entry.push_back(Pair("index", (int)i));
+        entry.pushKV("txid", txhash.GetHex());
+        entry.pushKV("index", (int)i);
 
         UniValue inputs(UniValue::VARR);
 
@@ -609,16 +609,16 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
                     // Catoshi: TODO: this looks way too much like getAddressFromIndex
 #warning "re-use getAddressFromIndex"
                     if (spentInfo.addressType == 1) {
-                        delta.push_back(Pair("address", EncodeDestination(CKeyID(spentInfo.addressHash))));
+                        delta.pushKV("address", EncodeDestination(CKeyID(spentInfo.addressHash)));
                     } else if (spentInfo.addressType == 2)  {
-                        delta.push_back(Pair("address", EncodeDestination(CScriptID(spentInfo.addressHash))));
+                        delta.pushKV("address", EncodeDestination(CScriptID(spentInfo.addressHash)));
                     } else {
                         continue;
                     }
-                    delta.push_back(Pair("satoshis", -1 * spentInfo.satoshis));
-                    delta.push_back(Pair("index", (int)j));
-                    delta.push_back(Pair("prevtxid", input.prevout.hash.GetHex()));
-                    delta.push_back(Pair("prevout", (int)input.prevout.n));
+                    delta.pushKV("satoshis", -1 * spentInfo.satoshis);
+                    delta.pushKV("index", (int)j);
+                    delta.pushKV("prevtxid", input.prevout.hash.GetHex());
+                    delta.pushKV("prevout", (int)input.prevout.n);
 
                     inputs.push_back(delta);
                 } else {
@@ -628,7 +628,7 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
             }
         }
 
-        entry.push_back(Pair("inputs", inputs));
+        entry.pushKV("inputs", inputs);
 
         UniValue outputs(UniValue::VARR);
 
@@ -639,38 +639,38 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
             
             if (out.scriptPubKey.IsPayToScriptHash()) {
                 std::vector<unsigned char> hashBytes(out.scriptPubKey.begin()+2, out.scriptPubKey.begin()+22);
-                delta.push_back(Pair("address", EncodeDestination(CScriptID(uint160(hashBytes)))));
+                delta.pushKV("address", EncodeDestination(CScriptID(uint160(hashBytes))));
 
             } else if (out.scriptPubKey.IsPayToPublicKeyHash()) {
                 std::vector<unsigned char> hashBytes(out.scriptPubKey.begin()+3, out.scriptPubKey.begin()+23);
-                delta.push_back(Pair("address", EncodeDestination(CKeyID(uint160(hashBytes)))));
+                delta.pushKV("address", EncodeDestination(CKeyID(uint160(hashBytes))));
             } else {
                 continue;
             }
 
-            delta.push_back(Pair("satoshis", out.nValue));
-            delta.push_back(Pair("index", (int)k));
+            delta.pushKV("satoshis", out.nValue);
+            delta.pushKV("index", (int)k);
 
             outputs.push_back(delta);
         }
 
-        entry.push_back(Pair("outputs", outputs));
+        entry.pushKV("outputs", outputs);
         deltas.push_back(entry);
 
     }
-    result.push_back(Pair("deltas", deltas));
-    result.push_back(Pair("time", block.GetBlockTime()));
-    result.push_back(Pair("mediantime", (int64_t)blockindex->GetMedianTimePast()));
-    result.push_back(Pair("nonce", (uint64_t)block.nNonce));
-    result.push_back(Pair("bits", strprintf("%08x", block.nBits)));
-    result.push_back(Pair("difficulty", GetDifficulty(blockindex)));
-    result.push_back(Pair("chainwork", blockindex->nChainWork.GetHex()));
+    result.pushKV("deltas", deltas);
+    result.pushKV("time", block.GetBlockTime());
+    result.pushKV("mediantime", (int64_t)blockindex->GetMedianTimePast());
+    result.pushKV("nonce", (uint64_t)block.nNonce);
+    result.pushKV("bits", strprintf("%08x", block.nBits));
+    result.pushKV("difficulty", GetDifficulty(blockindex));
+    result.pushKV("chainwork", blockindex->nChainWork.GetHex());
 
     if (blockindex->pprev)
-        result.push_back(Pair("previousblockhash", blockindex->pprev->GetBlockHash().GetHex()));
+        result.pushKV("previousblockhash", blockindex->pprev->GetBlockHash().GetHex());
     CBlockIndex *pnext = chainActive.Next(blockindex);
     if (pnext)
-        result.push_back(Pair("nextblockhash", pnext->GetBlockHash().GetHex()));
+        result.pushKV("nextblockhash", pnext->GetBlockHash().GetHex());
     return result;
 }
 
@@ -759,8 +759,8 @@ UniValue getblockhashes(const JSONRPCRequest& request)
     for (std::vector<std::pair<uint256, unsigned int> >::const_iterator it=blockHashes.begin(); it!=blockHashes.end(); it++) {
         if (fLogicalTS) {
             UniValue item(UniValue::VOBJ);
-            item.push_back(Pair("blockhash", it->first.GetHex()));
-            item.push_back(Pair("logicalts", (int)it->second));
+            item.pushKV("blockhash", it->first.GetHex());
+            item.pushKV("logicalts", (int)it->second);
             result.push_back(item);
         } else {
             result.push_back(it->first.GetHex());
