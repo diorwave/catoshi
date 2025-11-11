@@ -64,6 +64,9 @@ BOOST_AUTO_TEST_CASE(subsidy_limit_test)
     }
 #if defined(BRAND_bitcoin)
     BOOST_CHECK_EQUAL(nSum, 2099999997690000ULL);
+#elif defined(BRAND_foodchain)
+    // FoodChain has same parameters as Bitcoin: 21M coins, 50 coin subsidy, 210k halving
+    BOOST_CHECK_EQUAL(nSum, 2099999997690000ULL);
 #elif defined(BRAND_litecoin)
     BOOST_CHECK_EQUAL(nSum, 8399999990760000ULL);
 #elif defined(BRAND_grantcoin)

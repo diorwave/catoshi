@@ -10,14 +10,15 @@
 #if defined(BRAND_bitcoin)
 #include <test/data/base58_keys_invalid.json.h>
 #include <test/data/base58_keys_valid.json.h>
+#elif defined(BRAND_foodchain)
+#include <test/data/base58_keys_invalid.json.h>
+#include <test/data/base58_keys_valid.json.h>
 #elif defined(BRAND_litecoin)
 #include <test/data/ltc/base58_keys_invalid.json.h>
 #include <test/data/ltc/base58_keys_valid.json.h>
-#elif defined(BRAND_litecoin)
 #elif defined(BRAND_grantcoin)
 #include <test/data/grt/base58_keys_invalid.json.h>
 #include <test/data/grt/base58_keys_valid.json.h>
-#elif defined(BRAND_litecoin)
 #else
 #error "need base58 for this coin.. "
 #endif
