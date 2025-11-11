@@ -54,6 +54,9 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/thread.hpp>
 
+// Fix for modern Boost - make placeholders available
+using namespace boost::placeholders;
+
 #if defined(USE_SCRYPT)
 #include "crypto/scrypt.h"
 #endif
@@ -2479,14 +2482,15 @@ class ConnectTrace {
 private:
     std::vector<PerBlockConnectTrace> blocksConnected;
     CTxMemPool &pool;
+    boost::signals2::connection m_connection;
 
 public:
     explicit ConnectTrace(CTxMemPool &_pool) : blocksConnected(1), pool(_pool) {
-        pool.NotifyEntryRemoved.connect(boost::bind(&ConnectTrace::NotifyEntryRemoved, this, _1, _2));
+        m_connection = pool.NotifyEntryRemoved.connect(boost::bind(&ConnectTrace::NotifyEntryRemoved, this, _1, _2));
     }
 
     ~ConnectTrace() {
-        pool.NotifyEntryRemoved.disconnect(boost::bind(&ConnectTrace::NotifyEntryRemoved, this, _1, _2));
+        m_connection.disconnect();
     }
 
     void BlockConnected(CBlockIndex* pindex, std::shared_ptr<const CBlock> pblock) {
