@@ -191,12 +191,12 @@ void TxToUniv(const CTransaction& tx, const uint256& hashBlock, UniValue& entry,
             CSpentIndexValue spentInfo;
             CSpentIndexKey spentKey(txin.prevout.hash, txin.prevout.n);
             if (GetSpentIndex(spentKey, spentInfo)) {
-                in.push_back(Pair("value", ValueFromAmount(spentInfo.satoshis)));
-                in.push_back(Pair("valueSat", spentInfo.satoshis));
+                in.pushKV("value", ValueFromAmount(spentInfo.satoshis));
+                in.pushKV("valueSat", spentInfo.satoshis);
                 if (spentInfo.addressType == 1) {
-                    in.push_back(Pair("address", EncodeDestination(CKeyID(spentInfo.addressHash))));
+                    in.pushKV("address", EncodeDestination(CKeyID(spentInfo.addressHash)));
                 } else if (spentInfo.addressType == 2)  {
-                    in.push_back(Pair("address", EncodeDestination(CScriptID(spentInfo.addressHash))));
+                    in.pushKV("address", EncodeDestination(CScriptID(spentInfo.addressHash)));
                 }
             }
 #endif
