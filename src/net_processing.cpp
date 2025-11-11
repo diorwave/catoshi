@@ -30,6 +30,8 @@
 #include <utilmoneystr.h>
 #include <utilstrencodings.h>
 
+#include <array>
+
 #if defined(NDEBUG)
 # error "Catoshi cannot be compiled without assertions."
 #endif
