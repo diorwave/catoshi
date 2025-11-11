@@ -1,7 +1,34 @@
 
 #TODO: make this so we build all the tests for all the coins
 # but then list the ones to *exclude* from the regression run here
+
+# FoodChain: Skip base58 tests that expect Bitcoin-specific addresses
+# The test data contains bc1... (Bitcoin) addresses but FoodChain uses fd1...
+ifeq ($(COIN_BRAND),foodchain)
+TESTS_CPP +=
+TESTS_EXCLUDE += base58_tests
+endif
+
 ifeq ($(COIN_BRAND),bitcoin)
+
+TESTS_CPP +=\
+test/util_tests.cpp \
+test/txvalidationcache_tests.cpp \
+test/versionbits_tests.cpp \
+test/blockencodings_tests.cpp \
+test/bloom_tests.cpp \
+test/pow_tests.cpp \
+test/sighash_tests.cpp \
+
+
+JSON_TEST_FILES +=\
+  test/data/base58_keys_valid.json \
+  test/data/base58_keys_invalid.json \
+
+
+endif
+
+ifeq ($(COIN_BRAND),foodchain)
 
 TESTS_CPP +=\
 test/util_tests.cpp \

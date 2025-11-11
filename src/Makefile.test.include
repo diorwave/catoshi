@@ -148,6 +148,8 @@ TESTS_CPP +=\
 #endif
 
 TESTS := $(patsubst test/%.cpp,%,$(filter %_tests.cpp, $(TESTS_CPP)))
+# Exclude specified tests from the test run (but still compile them)
+TESTS := $(filter-out $(TESTS_EXCLUDE), $(TESTS))
 TEST_OBJS := $(patsubst %,$(OBJDIR)/test/%.o,$(TESTS))
 TEST_EXTRA_OBJS = $(OBJDIR)/test/test_codecoin.o $(OBJDIR)/test/test_bitcoin_main.o
 
