@@ -21,6 +21,8 @@ FoodChain. On linux, do this:
     make COIN_BRAND=bitcoin      # builds bitcoincoin
     make regression # builds & runs regression tests on multiple coins
 
+**✅ Phase 1 Status (November 2025):** Build system fully restored for modern Ubuntu 24.04 LTS. All binaries compile successfully, runtime verified, comprehensive CLI testing complete.
+
 ### What is Grantcoin?
 [Grantcoin](http://www.grantcoin.org/) (abbreviated GRT) is the first [cryptocurrency](https://en.wikipedia.org/wiki/Cryptocurrency) distributed primarily as Proof-of-Participation grants according to a transparent business plan by a legally incorporated nonprofit organization. Grantcoin is based on [Peercoin](http://peercoin.net/) (PPCoin), the first digital currency using Proof-of-Stake consensus as a security model, which is more energy efficient than [Bitcoin](http://en.wikipedia.org/wiki/Bitcoin)'s Proof-of-Work mining system. Grantcoin will begin with several months of PoW until the currency is widely circulated, with further evolution determined by the foundation and community.
 
@@ -107,20 +109,51 @@ Testing
 Testing is good. Do it. It makes aforementioned consensus easier.
 
 ### Building
-on debian 8.x:
 
-    sudo apt-get install mercurial build-essential libboost-dev \
-	libdb++-dev libssl-dev libminiupnpc-dev libboost-filesystem-dev \
-	libboost-system-dev libboost-program-options-dev \
-	libboost-thread-dev libboost-test-dev libleveldb-dev libevent-dev \
-	libzmq3-dev
-    cd src; make 
+**Quick Start (Ubuntu 24.04):**
 
-### Automated Testing
+```bash
+# Install dependencies
+sudo apt-get update && sudo apt-get install -y \
+    build-essential libboost-all-dev libssl-dev libdb++-dev \
+    libevent-dev libzmq3-dev libsecp256k1-dev libunivalue-dev \
+    zlib1g-dev pkg-config
+
+# Build
+cd src && make clean && make -j$(nproc)
+
+# Verify
+./obj/foodchaind --version
+```
+
+### Testing
 
 Developers are strongly encouraged to write unit tests for new code, and to
 submit new unit tests for old code.
 
-Unit tests for the core code are in `src/test/`. To compile and run them:
+**Unit Tests:**
+```bash
+cd src && make test
+```
 
-    cd src; make test
+**Functional Tests (Bitcoin-core compatible):**
+```bash
+# Run all functional tests
+test/functional/test_runner.py
+
+# Run specific test
+test/functional/wallet.py
+
+# Run with options (verbose, keep logs, etc)
+test/functional/test_runner.py --help
+```
+
+See [test/README.md](test/README.md) for more information about the testing framework.
+
+**Quick Manual Regtest:**
+```bash
+cd src
+./obj/foodchaind -regtest -daemon -datadir=/tmp/test
+./obj/foodchain-cli -regtest -datadir=/tmp/test -getinfo
+./obj/foodchain-cli -regtest -datadir=/tmp/test stop
+```

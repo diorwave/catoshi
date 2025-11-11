@@ -61,6 +61,8 @@ linux-build
 win32-build
 qa/pull-tester/tests_config.py
 qa/cache/*
+test/config.ini
+test/cache/*
 
 !src/leveldb*/Makefile
 
