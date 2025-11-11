@@ -54,6 +54,9 @@ DEFS=-DBOOST_SPIRIT_THREADSAFE -D_FILE_OFFSET_BITS=64 -DBRAND_$(COIN_BRAND) $(OS
 #debian jessie libboost-filesystem1.55 needs this
 DEFS += -DBOOST_NO_CXX11_SCOPED_ENUMS
 
+# Modern Boost compatibility - allow old boost::bind placeholders in global namespace
+DEFS += -DBOOST_BIND_GLOBAL_PLACEHOLDERS
+
 OBJDIR = obj/$(COIN_BRAND)
 TESTDIR = $(OBJDIR)/test
 SUBDIRS = \
